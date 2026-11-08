@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+<title>Oscar's Music</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: slim top bar, one centered column (max 880px) switching between list, detail and plan views; a persistent mini-brand, A-Z rail beside lists. */
+:root{
+  --bg:#f2f5f6; --surface:#ffffff; --sunk:#e6ecee; --ink:#13232b; --muted:#5b6b73; --line:#d3dcdf;
+  --accent:#0e6f73; --accent-ink:#ffffff; --accent-soft:#d6ecec; --warn:#a85a00; --warn-soft:#fbe9cf;
+  --f-display:'Bricolage Grotesque','Trebuchet MS',sans-serif;
+  --f-body:'Source Sans 3','Segoe UI',sans-serif;
+  --f-mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1a1f; --surface:#17262d; --sunk:#0b1418; --ink:#e6eef0; --muted:#97a9b0; --line:#2a3d46;
+  --accent:#4cc3c4; --accent-ink:#062325; --accent-soft:#16393c; --warn:#f0b35f; --warn-soft:#3a2a10; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1a1f; --surface:#17262d; --sunk:#0b1418; --ink:#e6eef0; --muted:#97a9b0; --line:#2a3d46;
+  --accent:#4cc3c4; --accent-ink:#062325; --accent-soft:#16393c; --warn:#f0b35f; --warn-soft:#3a2a10; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:880px;margin:0 auto;padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--f-display);line-height:1.15;text-wrap:balance;margin:0}
+h1{font-size:2rem} h2{font-size:1.35rem} h3{font-size:1.05rem}
+.muted{color:var(--muted)} .small{font-size:.875rem}
+.label{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+.bar{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding-block:10px}
+.brand{font-family:var(--f-display);font-weight:700;font-size:1.25rem;letter-spacing:-.01em;background:none;border:0;padding:0;display:flex;align-items:center;gap:8px}
+.brand i{width:22px;height:22px;border-radius:50%;background:var(--accent);display:inline-block;box-shadow:inset -6px -4px 0 rgba(0,0,0,.18)}
+nav{display:flex;gap:4px;flex:1;min-width:0}
+nav button,.seg button{background:none;border:0;padding:6px 12px;border-radius:6px;color:var(--muted);font-weight:600}
+nav button[aria-current="true"],.seg button[aria-current="true"]{background:var(--accent-soft);color:var(--accent)}
+.role{display:flex;align-items:center;gap:8px;font-size:.875rem}
+.switch{width:38px;height:22px;border-radius:11px;border:1px solid var(--line);background:var(--sunk);position:relative;padding:0}
+.switch::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--muted);transition:transform .15s}
+.switch[aria-checked="true"]{background:var(--accent);border-color:var(--accent)}
+.switch[aria-checked="true"]::after{transform:translateX(16px);background:var(--accent-ink)}
+.mock{background:var(--warn-soft);color:var(--warn);font-size:.8125rem;padding:6px 0}
+
+main{padding-block:28px 64px}
+.head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.search{position:relative;flex:1;min-width:220px;max-width:420px}
+.search input{width:100%;padding:10px 12px 10px 38px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.btn{border:1px solid var(--line);background:var(--surface);padding:8px 14px;border-radius:8px;font-weight:600}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.small{padding:4px 10px;font-size:.875rem}
+.btn.danger{color:var(--warn)}
+.admin-only{display:none} body.admin .admin-only{display:inline-flex}
+body.admin div.admin-only{display:flex;flex-wrap:wrap}
+
+.cover{aspect-ratio:1;border-radius:6px;display:grid;place-items:center;font-family:var(--f-display);font-weight:700;color:#fff;flex:none;overflow:hidden;background-size:cover;background-position:center}
+.cover.none{background:var(--sunk);color:var(--muted);border:1px dashed var(--line)}
+.list-wrap{display:grid;grid-template-columns:1fr 28px;gap:12px;align-items:start}
+.az{position:sticky;top:calc(env(safe-area-inset-top,0px) + 70px);display:flex;flex-direction:column;font-size:.7rem;font-weight:600;text-align:center;color:var(--muted)}
+.az a{padding:1px 0;text-decoration:none;color:inherit} .az a.off{opacity:.3;pointer-events:none}
+.letter{font-family:var(--f-display);font-size:1.1rem;color:var(--accent);padding:14px 0 4px;border-bottom:1px solid var(--line);scroll-margin-top:90px}
+.row{display:flex;gap:14px;align-items:center;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);padding:10px 4px}
+.row:hover{background:var(--accent-soft)}
+.row .cover{width:48px;font-size:1.1rem}
+.row .meta{flex:1;min-width:0}
+.row .title{font-weight:600;overflow-wrap:anywhere}
+.row .by{font-size:.875rem;color:var(--muted);overflow-wrap:anywhere}
+.tags{display:flex;gap:6px;flex:none}
+.tag{font-size:.7rem;font-weight:600;border:1px solid var(--line);border-radius:4px;padding:1px 6px;color:var(--muted)}
+mark{background:var(--warn-soft);color:inherit;border-radius:2px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:20px}
+.card{background:none;border:0;padding:0;text-align:left;display:flex;flex-direction:column;gap:8px}
+.card .cover{width:100%;font-size:2.4rem}
+.card:hover .title{color:var(--accent)}
+.empty{padding:40px 0;text-align:center;color:var(--muted)}
+
+.detail-head{display:flex;gap:22px;flex-wrap:wrap;margin-bottom:22px}
+.detail-head .cover{width:min(200px,100%);font-size:3.4rem}
+.detail-head .info{flex:1;min-width:240px;display:flex;flex-direction:column;gap:10px}
+dl.credits{display:grid;grid-template-columns:auto 1fr;gap:2px 14px;margin:0}
+dl.credits dt{color:var(--muted);font-size:.875rem} dl.credits dd{margin:0}
+.note{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);padding:10px 14px;border-radius:0 8px 8px 0}
+.back{background:none;border:0;color:var(--accent);font-weight:600;padding:0;margin-bottom:14px}
+
+.player{display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin-bottom:24px}
+.player .play{width:44px;height:44px;border-radius:50%;border:0;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;flex:none}
+.player .track{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.time{font-family:var(--f-mono);font-size:.8rem;color:var(--muted);display:flex;justify-content:space-between}
+.player.off{background:var(--sunk);color:var(--muted);border-style:dashed}
+
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:18px}
+.tabs button{background:none;border:0;border-bottom:3px solid transparent;padding:10px 18px;font-weight:600;color:var(--muted);margin-bottom:-1px}
+.tabs button[aria-selected="true"]{color:var(--ink);border-color:var(--accent)}
+.lyrics{white-space:pre-wrap;max-width:65ch;font-size:1.1rem;line-height:1.75}
+.lyrics .sec{display:block;font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-top:18px}
+pre.chords{font-family:var(--f-mono);font-size:.95rem;line-height:1.55;overflow-x:auto;margin:0;max-width:100%}
+pre.chords b{color:var(--accent);font-weight:500}
+.score{background:#fff;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+.score svg{display:block;min-width:620px;width:100%}
+.placeholder{border:1px dashed var(--line);border-radius:8px;padding:28px;text-align:center;color:var(--muted)}
+
+.tracks{list-style:none;padding:0;margin:0}
+.tracks li{display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line);padding:8px 0}
+.tracks .n{width:24px;font-family:var(--f-mono);color:var(--muted);text-align:right}
+.tracks .cover{width:40px;font-size:1rem}
+.tracks .go{flex:1;min-width:0;background:none;border:0;text-align:left;padding:0}
+.tracks .ctl{display:none;gap:4px} body.admin .tracks .ctl{display:flex}
+.ib{width:30px;height:30px;border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:0}
+.ib:disabled{opacity:.35;cursor:default}
+
+form.f{display:grid;gap:16px;max-width:640px}
+form.f label{display:grid;gap:4px;font-weight:600}
+form.f label span.hint{font-weight:400;color:var(--muted);font-size:.875rem}
+form.f input[type=text],form.f input[type=url],form.f input[type=email],form.f input[type=date],form.f input[type=time],form.f textarea,form.f select{padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--surface);width:100%;font-weight:400}
+form.f textarea{min-height:110px;resize:vertical}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:560px){.two{grid-template-columns:1fr}.tags{display:none}}
+.drop{border:1px dashed var(--line);border-radius:8px;padding:12px;font-weight:400;display:flex;gap:12px;align-items:center;background:var(--surface)}
+.drop .cover{width:56px}
+
+/* Links, calendar, contact */
+.links{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px;font-weight:600;font-size:.875rem;text-decoration:none;color:var(--ink)}
+a.chip:hover{border-color:var(--accent);color:var(--accent)}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.amts{display:flex;gap:8px;flex-wrap:wrap}
+.event{display:flex;gap:16px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--line)}
+.event .date{width:52px;flex:none;text-align:center;background:var(--accent-soft);border-radius:8px;padding:6px 0;display:flex;flex-direction:column;line-height:1.1}
+.event .date b{font-family:var(--f-display);font-size:1.5rem;color:var(--accent)} .event .date span{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.event .what{flex:1;min-width:0} .evtop{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.event .by{color:var(--muted);font-size:.9rem}
+.event .acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+a.btn{text-decoration:none;display:inline-block;color:var(--ink)}
+@media(max-width:560px){.event{flex-wrap:wrap}.event .acts{width:100%;justify-content:flex-start;padding-left:68px}}
+.reasons{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:26px}
+.reason{display:grid;gap:4px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.reason[aria-checked="true"]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft);background:var(--accent-soft)}
+.about{display:grid;gap:28px}
+.about-grid{display:flex;gap:26px;flex-wrap:wrap;align-items:flex-start}
+.portrait{width:min(220px,100%);aspect-ratio:1;border-radius:6px;background:linear-gradient(135deg,hsl(188 55% 38%),hsl(238 60% 55%));color:#fff;display:grid;place-items:center;font-family:var(--f-display);font-weight:700;font-size:3.6rem;flex:none}
+.prose{flex:1;min-width:240px;max-width:65ch} .prose p{margin:0 0 14px;font-size:1.05rem}
+.lk{display:inline-flex;align-items:center;gap:2px}
+.x{border:0;background:none;color:var(--muted);font-size:1.1rem;padding:0 4px}
+.lkin{padding:5px 9px;border:1px solid var(--line);border-radius:8px;background:var(--surface);min-width:0;flex:1;max-width:280px}
+/* Plan */
+.plan{display:grid;gap:34px}
+.plan section{display:grid;gap:12px}
+.plan p{margin:0;max-width:70ch}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:grid;gap:6px;align-content:start}
+.box ul,.plan ul{margin:0;padding-left:18px}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+td code,.plan code{font-family:var(--f-mono);font-size:.85em;background:var(--sunk);padding:1px 5px;border-radius:4px}
+.phase{display:grid;grid-template-columns:96px 1fr;gap:6px 18px;padding:14px 0;border-top:1px solid var(--line)}
+.phase .when{font-family:var(--f-mono);font-size:.85rem;color:var(--accent)}
+@media(max-width:560px){.phase{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<header class="top"><div class="wrap bar">
+  <button class="brand" data-act="go" data-v="songs"><i></i>Oscar's Music</button>
+  <nav aria-label="Main">
+    <button data-act="go" data-v="songs" id="n-songs">Songs</button>
+    <button data-act="go" data-v="collections" id="n-collections">Collections</button>
+    <button data-act="go" data-v="calendar" id="n-calendar">Calendar</button>
+    <button data-act="go" data-v="about" id="n-about">About</button>
+    <button data-act="go" data-v="contact" id="n-contact">Contact</button>
+  </nav>
+  <div class="role"><span id="roleLabel">Listener view</span>
+    <button class="switch" role="switch" aria-checked="false" aria-label="Preview as admin" data-act="role"></button></div>
+  <button class="btn primary" data-act="book">Book Oscar</button>
+</div></header>
+<div class="mock"><div class="wrap"><b>Mockup.</b> Songs, names and lyrics are made-up samples. Use the switch to preview what admins see. The audio player is simulated.</div></div>
+<main class="wrap" id="app"></main>
+
+<script>
+const $=s=>document.querySelector(s), app=$('#app');
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const HUES=[188,24,262,340,142,48,210,8];
+
+let songs=[
+ {id:1,links:[{t:'YouTube',u:'https://www.youtube.com/'},{t:'Spotify',u:'https://open.spotify.com/'}],title:'Harbour Lights',lw:['Oscar Nash','Mira Delaney'],mw:['Oscar Nash'],len:214,audio:true,score:true,img:true,hue:0,key:'G major',
+  note:'First written on the ferry home in 2019. Sung slowly, with the second verse almost spoken.',
+  lyrics:"[Verse 1]\nThe harbour lights come on one by one\nAs the last boat turns for home\nI count the windows along the quay\nAnd none of them are mine alone\n\n[Chorus]\nSo leave a light on for the ones at sea\nLeave a light on for me\nThe tide will bring us back again\nTo wherever we are meant to be\n\n[Verse 2]\nThe gulls go quiet over the wall\nThe nets are drying in rows\nSomebody hums an old refrain\nNobody knows where it goes",
+  chords:[["G            D/F#          Em","The harbour lights come on one by one"],["C              G/B          Am   D","As the last boat turns for home"],["G            D/F#          Em","I count the windows along the quay"],["C              D            G","And none of them are mine alone"],["","" ],["C         G          D","So leave a light on for the ones at sea"],["C         G          Em  D","Leave a light on for me"]]},
+ {id:2,links:[{t:'Apple Music',u:'https://music.apple.com/'}],title:'Amber Fields',lw:['Oscar Nash'],mw:['Oscar Nash','Tomas Wren'],len:187,audio:true,score:false,img:true,hue:1,key:'D major',note:'Harvest song. Works well with a shaker and two-part harmony in the chorus.',
+  lyrics:"[Verse 1]\nWheat is bowing to the wind\nGold as an old coin\nWe walk the rows at the end of day\nWith the whole sky for a roof\n\n[Chorus]\nAmber fields, amber fields\nHold the light a little longer",chords:[["D          A/C#        Bm","Wheat is bowing to the wind"],["G           D/F#       A","Gold as an old coin"]]},
+ {id:3,links:[{t:'YouTube',u:'https://www.youtube.com/'},{t:'Spotify',u:'https://open.spotify.com/'},{t:'Apple Music',u:'https://music.apple.com/'}],title:'Between the Rooms',lw:['Priya Nair'],mw:['Oscar Nash'],len:241,audio:true,score:true,img:false,hue:2,key:'A minor',note:'Priya sent the words in 2021. Oscar set them over a weekend.',
+  lyrics:"[Verse 1]\nThere is a hallway in the house\nWhere the clocks disagree\nI wait between the rooms\nFor someone to ask me in",chords:[["Am          F          C","There is a hallway in the house"],["G            Em         Am","Where the clocks disagree"]]},
+ {id:4,links:[],title:'Bell Tower Waltz',lw:[],mw:['Oscar Nash'],len:156,audio:true,score:true,img:true,hue:3,key:'F major',note:'Instrumental. Three-quarter time.',lyrics:'',chords:[]},
+ {id:5,links:[],title:'Cold Water Morning',lw:['Oscar Nash','Tomas Wren'],mw:['Oscar Nash','Tomas Wren'],len:198,audio:false,score:false,img:false,hue:4,key:'E minor',note:'Demo not recorded yet.',lyrics:'',chords:[]},
+ {id:6,links:[],title:'Everything Returns',lw:['Mira Delaney'],mw:['Mira Delaney','Oscar Nash'],len:225,audio:true,score:false,img:true,hue:5,key:'C major',note:'',lyrics:'',chords:[]},
+ {id:7,links:[],title:'Lantern Song',lw:['Oscar Nash'],mw:['Oscar Nash'],len:172,audio:true,score:true,img:false,hue:6,key:'Bb major',note:'Children\'s choir arrangement available on request.',lyrics:'',chords:[]},
+ {id:8,links:[],title:'Salt and Rope',lw:['Priya Nair','Oscar Nash'],mw:['Oscar Nash'],len:203,audio:true,score:false,img:true,hue:7,key:'D minor',note:'',lyrics:'',chords:[]},
+ {id:9,links:[],title:'An Open Door',lw:['Oscar Nash'],mw:['Tomas Wren'],len:190,audio:false,score:false,img:false,hue:0,key:'G major',note:'',lyrics:'',chords:[]}
+];
+let lists=[
+ {id:1,title:'Songs of the Sea',img:true,hue:0,note:'Written between 2018 and 2022. Good for an evening set.',links:[],ids:[1,8,7]},
+ {id:2,title:'Choir Favourites',img:false,hue:2,note:'Songs the community choir sings most often, in rehearsal order.',links:[],ids:[2,7,3]},
+ {id:3,title:'Instrumentals',img:true,hue:3,note:'',links:[],ids:[4]},
+ {id:4,title:"Live at St Anne's Hall",img:true,hue:5,note:'Recorded at the evening concert in Bristol, with Mira Delaney on harmony. Sample entry showing a whole-session recording.',links:[{t:'YouTube',u:'https://www.youtube.com/'},{t:'Spotify',u:'https://open.spotify.com/'}],ids:[1,2,3]}
+];
+let S={reason:'message',view:'songs',id:null,q:'',admin:false,tab:'lyrics',draft:{img:null}};
+let nextId=100,timer=null;
+
+const fmt=s=>Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');
+const sortT=a=>[...a].sort((x,y)=>x.title.replace(/^(the|an?) /i,'').localeCompare(y.title.replace(/^(the|an?) /i,''),undefined,{sensitivity:'base'}));
+const sortKey=t=>t.replace(/^(the|an?) /i,'')[0].toUpperCase();
+const hl=(t,q)=>{t=esc(t);if(!q)return t;const r=new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','ig');return t.replace(r,'<mark>$1</mark>')};
+function cover(o,cls=''){
+  if(!o.img)return `<div class="cover none ${cls}" aria-hidden="true">${esc(o.title[0])}</div>`;
+  const h=HUES[o.hue%8];
+  return `<div class="cover ${cls}" aria-hidden="true" style="background:linear-gradient(135deg,hsl(${h} 55% 38%),hsl(${(h+50)%360} 60% 55%))">${esc(o.title[0])}</div>`}
+const songBy=s=>[s.lw.length?'Words: '+s.lw.join(', '):'',s.mw.length?'Music: '+s.mw.join(', '):''].filter(Boolean).join(' · ');
+const songById=id=>songs.find(s=>s.id===id);
+
+function go(v,id){clearInterval(timer);S.view=v;S.id=id??null;S.tab='lyrics';if(v==='songs'||v==='collections')S.q='';
+  history.replaceState(null,'','#'+(v==='calendar'||v==='contact'||v==='about'?v:v==='collections'||v==='collection'?'collections':'songs'));render();window.scrollTo(0,0)}
+function render(){
+  document.body.classList.toggle('admin',S.admin);
+  $('#roleLabel').textContent=S.admin?'Admin view':'Listener view';
+  $('.switch').setAttribute('aria-checked',S.admin);
+  const nav={songs:'songs',song:'songs',new:'songs',collections:'collections',collection:'collections',calendar:'calendar',about:'about',contact:'contact'}[S.view];
+  document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-current',b.id==='n-'+nav));
+  ({songs:vSongs,collections:vLists,song:vSong,collection:vList,new:vNew,calendar:vCal,about:vAbout,contact:vContact})[S.view]();
+}
+
+/* ---------- Songs list ---------- */
+function searchBox(ph){return `<div class="search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="7" cy="7" r="5"/><path d="M11 11l4 4"/></svg><input id="q" type="search" placeholder="${ph}" value="${esc(S.q)}" aria-label="${ph}" autocomplete="off"></div>`}
+function vSongs(){
+  app.innerHTML=`<div class="head"><div><h1>Songs</h1><div class="muted" id="count"></div></div>${searchBox('Search by title or co-writer')}
+   <button class="btn primary admin-only" data-act="go" data-v="new">+ Add song</button></div><div id="out"></div>`;
+  fillSongs();$('#q').addEventListener('input',e=>{S.q=e.target.value;fillSongs()});
+}
+function fillSongs(){
+  const q=S.q.trim().toLowerCase();
+  let list=sortT(songs).filter(s=>!q||[s.title,...s.lw,...s.mw].some(x=>x.toLowerCase().includes(q)));
+  $('#count').textContent=q?`${list.length} of ${songs.length} songs match`:`${songs.length} songs, A to Z`;
+  if(!list.length){$('#out').innerHTML=`<div class="empty">No songs match “${esc(S.q)}”. Try a title or a co-writer's name.</div>`;return}
+  let html='',cur='';const have=new Set();
+  for(const s of list){const L=sortKey(s.title);have.add(L);
+    if(L!==cur){cur=L;html+=`<div class="letter" id="L${L}">${L}</div>`}
+    const who=[...s.lw,...s.mw].filter((x,i,a)=>a.indexOf(x)===i);
+    html+=`<button class="row" data-act="song" data-id="${s.id}">${cover(s)}<div class="meta"><div class="title">${hl(s.title,q)}</div>
+     <div class="by">${q?hl(songBy(s),q):esc(songBy(s)||'No credits')}</div></div>
+     <div class="tags">${s.audio?'<span class="tag">Audio</span>':''}${s.lyrics?'<span class="tag">Lyrics</span>':''}${s.chords.length?'<span class="tag">Chords</span>':''}${s.score?'<span class="tag">Score</span>':''}</div></button>`}
+  const rail='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(l=>`<a href="#L${l}" class="${have.has(l)?'':'off'}" data-az="${l}">${l}</a>`).join('');
+  $('#out').innerHTML=`<div class="list-wrap"><div>${html}</div><div class="az" aria-label="Jump to letter">${rail}</div></div>`;
+}
+
+/* ---------- Collections list ---------- */
+function vLists(){
+  app.innerHTML=`<div class="head"><div><h1>Collections</h1><div class="muted" id="count"></div></div>${searchBox('Search collections')}
+   <button class="btn primary admin-only" data-act="newlist">+ New collection</button></div><div id="out"></div>`;
+  fillLists();$('#q').addEventListener('input',e=>{S.q=e.target.value;fillLists()});
+}
+function fillLists(){
+  const q=S.q.trim().toLowerCase();
+  const l=sortT(lists).filter(p=>!q||p.title.toLowerCase().includes(q));
+  $('#count').textContent=`${lists.length} collections, A to Z`;
+  $('#out').innerHTML=l.length?`<div class="grid">${l.map(p=>`<button class="card" data-act="list" data-id="${p.id}">${cover(p)}
+   <div><div class="title" style="font-weight:600">${hl(p.title,q)}</div><div class="small muted">${p.ids.length} song${p.ids.length===1?'':'s'}</div></div></button>`).join('')}</div>`
+   :`<div class="empty">No collections match “${esc(S.q)}”.</div>`;
+}
+
+/* ---------- Song detail ---------- */
+function vSong(){
+  const s=songById(S.id);clearInterval(timer);
+  const pls=lists.filter(p=>p.ids.includes(s.id));
+  const dis=(h)=>`<div class="placeholder">${h}</div>`;
+  app.innerHTML=`<button class="back" data-act="go" data-v="songs">← All songs</button>
+  <div class="detail-head">${cover(s)}<div class="info"><h1>${esc(s.title)}</h1>
+   <dl class="credits"><dt>Lyrics by</dt><dd>${esc(s.lw.join(', ')||'—')}</dd><dt>Music by</dt><dd>${esc(s.mw.join(', ')||'—')}</dd>
+   <dt>Key</dt><dd>${esc(s.key)}</dd>${pls.length?`<dt>Collections</dt><dd>${pls.map(p=>`<a href="#collections" data-act="list" data-id="${p.id}" style="color:var(--accent)">${esc(p.title)}</a>`).join(', ')}</dd>`:''}</dl>
+   ${s.note?`<div class="note">${esc(s.note)}</div>`:''}
+   ${s.links.length?`<div class="links"><span class="label">Also on</span>${s.links.map(l=>`<a class="chip" href="${esc(l.u)}" target="_blank" rel="noopener noreferrer">${esc(l.t)} ↗</a>`).join('')}</div>`:''}
+   <div class="admin-only" style="gap:8px"><button class="btn small" data-act="stub">Edit details</button> <button class="btn small danger" data-act="delsong" data-id="${s.id}">Delete song</button></div>
+   <div class="admin-only" style="gap:8px;align-items:center"><select id="addcol" class="btn small" aria-label="Add to a collection">${sortT(lists).filter(p=>!p.ids.includes(s.id)).map(p=>`<option value="${p.id}">${esc(p.title)}</option>`).join('')}</select><button class="btn small" data-act="addcol" data-id="${s.id}">Add to collection</button></div></div></div>
+  ${s.audio?`<div class="player"><button class="play" data-act="play" aria-label="Play"><svg id="pi" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><path d="M4 2l12 7-12 7z"/></svg></button>
+    <div class="track"><input type="range" id="seek" min="0" max="${s.len}" value="0" step="1" aria-label="Seek"><div class="time"><span id="cur">0:00</span><span>${fmt(s.len)}</span></div></div></div>`
+   :`<div class="player off">No recording yet. <span class="admin-only" style="display:none;margin-left:6px"><button class="btn small" data-act="stub">Upload audio</button></span></div>`}
+  <div class="tabs" role="tablist">${['lyrics','chords','score'].map(t=>`<button role="tab" data-act="tab" data-t="${t}" aria-selected="${t==='lyrics'}">${t[0].toUpperCase()+t.slice(1)}</button>`).join('')}</div>
+  <div id="p-lyrics" class="pane">${s.lyrics?`<div class="lyrics">${esc(s.lyrics).replace(/\[([^\]]+)\]/g,'<span class="sec">$1</span>')}</div>`:dis('No lyrics added yet.')}</div>
+  <div id="p-chords" class="pane" hidden>${s.chords.length?`<pre class="chords">${s.chords.map(([c,l])=>c||l?`<b>${esc(c)}</b>\n${esc(l)}`:'').join('\n\n')}</pre>`:dis('No chords added yet.')}</div>
+  <div id="p-score" class="pane" hidden>${s.score?scoreSVG(s):dis('No score uploaded yet.')}</div>`;
+  S.pos=0;S.playing=false;
+  const seek=$('#seek');if(seek)seek.addEventListener('input',e=>{S.pos=+e.target.value;$('#cur').textContent=fmt(S.pos)});
+}
+function scoreSVG(s){
+  const y=[30,42,54,66,78];let g='';
+  [0,1].forEach(r=>{const o=r*110;y.forEach(v=>g+=`<line x1="20" x2="780" y1="${v+o}" y2="${v+o}" stroke="#222" stroke-width="1"/>`);g+=`<line x1="20" x2="20" y1="${30+o}" y2="${78+o}" stroke="#222"/><text x="26" y="${72+o}" font-size="54" fill="#222" font-family="serif">&#119070;</text>`;
+   for(let i=0;i<8;i++){const x=110+i*82,yy=[78,66,60,54,60,66,48,54][(i+r*3)%8]+o;g+=`<ellipse cx="${x}" cy="${yy}" rx="6" ry="4.5" fill="#222" transform="rotate(-15 ${x} ${yy})"/><line x1="${x+5.5}" x2="${x+5.5}" y1="${yy}" y2="${yy-30}" stroke="#222"/>`;if(i%4==3)g+=`<line x1="${x+40}" x2="${x+40}" y1="${30+o}" y2="${78+o}" stroke="#222"/>`}});
+  return `<div class="score"><svg viewBox="0 0 800 230" role="img" aria-label="Sample score for ${esc(s.title)}">${g}</svg></div><p class="small muted">Sample engraving. The real app shows the uploaded PDF or image of the score, for viewing only; there is no download.</p>`}
+
+/* ---------- Collection detail ---------- */
+function vList(){
+  const p=lists.find(x=>x.id===S.id);
+  const items=p.ids.map(songById);
+  app.innerHTML=`<button class="back" data-act="go" data-v="collections">← All collections</button>
+  <div class="detail-head">${cover(p)}<div class="info"><h1>${esc(p.title)}</h1><div class="muted">${items.length} songs · ${fmt(items.reduce((a,s)=>a+s.len,0))} total</div>
+   ${p.note?`<div class="note">${esc(p.note)}</div>`:'<div class="muted small">No note for this collection.</div>'}
+   ${p.links.length?`<div class="links"><span class="label">Watch and listen</span>${p.links.map((l,i)=>`<span class="lk"><a class="chip" href="${esc(l.u)}" target="_blank" rel="noopener noreferrer">${esc(l.t)} ↗</a><button class="x admin-only" data-act="rmlink" data-i="${i}" aria-label="Remove ${esc(l.t)} link">×</button></span>`).join('')}</div>`:''}
+   <div class="admin-only" style="gap:8px;align-items:center"><select id="lk-t" class="btn small" aria-label="Link type"><option>YouTube</option><option>Spotify</option><option>Apple Music</option><option>Video</option><option>Other</option></select><input type="url" id="lk-u" class="lkin" placeholder="https:// link to recording" aria-label="Link address"><button class="btn small" data-act="addlink">Add link</button></div>
+   <div class="admin-only" style="gap:8px"><button class="btn small" data-act="stub">Edit details</button> <button class="btn small danger" data-act="dellist" data-id="${p.id}">Delete collection</button></div></div></div>
+  ${items.length?`<ol class="tracks">${items.map((s,i)=>`<li><span class="n">${i+1}</span>${cover(s)}
+   <button class="go" data-act="song" data-id="${s.id}"><div style="font-weight:600">${esc(s.title)}</div><div class="small muted">${esc(songBy(s))}</div></button>
+   <span class="muted small" style="font-family:var(--f-mono)">${fmt(s.len)}</span>
+   <span class="ctl"><button class="ib" aria-label="Move up" data-act="mv" data-i="${i}" data-d="-1" ${i===0?'disabled':''}>↑</button><button class="ib" aria-label="Move down" data-act="mv" data-i="${i}" data-d="1" ${i===items.length-1?'disabled':''}>↓</button><button class="ib" aria-label="Remove from collection" data-act="rm" data-i="${i}">×</button></span></li>`).join('')}</ol>`
+   :'<div class="empty">This collection has no songs yet.</div>'}
+  <div class="admin-only" style="gap:8px;margin-top:16px;align-items:center"><select id="addsel" aria-label="Add a song" class="btn">${sortT(songs).filter(s=>!p.ids.includes(s.id)).map(s=>`<option value="${s.id}">${esc(s.title)}</option>`).join('')}</select><button class="btn" data-act="add">Add to collection</button></div>`;
+}
+
+/* ---------- New song (admin) ---------- */
+function vNew(){
+  app.innerHTML=`<button class="back" data-act="go" data-v="songs">← All songs</button><h1 style="margin-bottom:18px">Add a song</h1>
+  <form class="f" id="nf">
+   <label>Title<input type="text" id="f-title" required placeholder="e.g. Harbour Lights"></label>
+   <div class="two"><label>Lyrics co-writers<input type="text" id="f-lw" placeholder="Names, separated by commas"><span class="hint">Leave blank for an instrumental.</span></label>
+   <label>Music co-writers<input type="text" id="f-mw" placeholder="Names, separated by commas"></label></div>
+   <label>Note<textarea id="f-note" placeholder="Background, performance tips, who it's for"></textarea></label>
+   <label>Square image <span class="hint">Optional. Cropped to a square automatically.</span><span class="drop"><span id="prev" class="cover none" style="width:56px">?</span><input type="file" id="f-img" accept="image/*"></span></label>
+   <label>Audio recording <span class="hint">Optional. MP3, M4A or WAV.</span><input type="file" id="f-aud" accept="audio/*"></label>
+   <div class="two"><label>YouTube link <span class="hint">Optional</span><input type="url" id="f-yt" placeholder="https://"></label><label>Spotify link <span class="hint">Optional</span><input type="url" id="f-sp" placeholder="https://"></label></div>
+   <div class="two"><label>Apple Music link <span class="hint">Optional</span><input type="url" id="f-am" placeholder="https://"></label><label>Other link <span class="hint">Optional</span><input type="url" id="f-ot" placeholder="https://"></label></div>
+   <label>Lyrics<textarea id="f-lyr" placeholder="[Verse 1]&#10;First line…"></textarea><span class="hint">Put section names in [brackets].</span></label>
+   <label>Chords <span class="hint">Paste a chord sheet, or leave blank.</span><textarea id="f-ch" style="font-family:var(--f-mono)"></textarea></label>
+   <label>Score <span class="hint">Optional. PDF or image.</span><input type="file" id="f-sc" accept="application/pdf,image/*"></label>
+   <div style="display:flex;gap:10px"><button class="btn primary" type="submit">Save song</button><button class="btn" type="button" data-act="go" data-v="songs">Cancel</button></div>
+  </form>`;
+  S.draft.img=null;
+  $('#f-img').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{S.draft.img=r.result;$('#prev').className='cover';$('#prev').style.cssText=`width:56px;background-image:url(${r.result})`;$('#prev').textContent=''};r.readAsDataURL(f)});
+  $('#nf').addEventListener('submit',e=>{e.preventDefault();
+    const names=v=>v.split(',').map(x=>x.trim()).filter(Boolean);
+    const lk=[['YouTube','f-yt'],['Spotify','f-sp'],['Apple Music','f-am'],['Listen','f-ot']].map(([n,i])=>({t:n,u:$('#'+i).value.trim()})).filter(l=>l.u);
+    songs.push({id:nextId++,links:lk,title:$('#f-title').value.trim(),lw:names($('#f-lw').value),mw:names($('#f-mw').value),len:180,audio:!!$('#f-aud').files[0],score:!!$('#f-sc').files[0],img:!!S.draft.img,hue:nextId%8,key:'—',note:$('#f-note').value.trim(),lyrics:$('#f-lyr').value.trim(),chords:$('#f-ch').value.trim()?$('#f-ch').value.split('\n').map(l=>['',l]):[]});
+    go('songs')});
+}
+
+/* ---------- Calendar ---------- */
+const day=n=>{const d=new Date();d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)};
+let events=[
+ {id:1,date:day(12),time:'19:30',title:'Songs of the Sea evening',kind:'Concert',venue:"St Anne's Hall",city:'Bristol',note:'A full set with Mira Delaney guesting on harmony.',link:{t:'Tickets',u:'https://example.com/tickets'}},
+ {id:2,date:day(19),time:'10:30',title:'Open singing morning',kind:'Workshop',venue:'Riverside Community Centre',city:'Bath',note:'Learn two new songs by ear. All voices welcome, no experience needed.',link:{t:'More info',u:'https://example.com/info'}},
+ {id:3,date:day(33),time:'20:00',title:'Lantern Song carol night',kind:'Concert',venue:'The Old Mill',city:'Stroud',note:'',link:null},
+ {id:4,date:day(61),time:'14:00',title:'Songwriting day',kind:'Workshop',venue:'Harbour Arts Studio',city:'Falmouth',note:'Bring a half-finished song. Places are limited to 12.',link:{t:'Book a place',u:'https://example.com/book'}},
+ {id:5,date:day(88),time:'19:00',title:'Choir collaboration',kind:'Concert',venue:'Town Hall',city:'Exeter',note:'With the Exeter Community Choir.',link:{t:'Tickets',u:'https://example.com/tickets'}}
+];
+const MON=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const WD=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+function vCal(){
+  const list=[...events].sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time));
+  let html='',cur='';
+  for(const e of list){const d=new Date(e.date+'T12:00');const m=MON[d.getMonth()]+' '+d.getFullYear();
+    if(m!==cur){cur=m;html+=`<div class="letter">${m}</div>`}
+    html+=`<article class="event"><div class="date"><b>${d.getDate()}</b><span>${WD[d.getDay()]}</span></div>
+     <div class="what"><div class="evtop"><h3>${esc(e.title)}</h3><span class="tag">${esc(e.kind)}</span></div>
+      <div class="by">${esc(e.time)} · ${esc(e.venue)}, ${esc(e.city)}</div>${e.note?`<div class="small" style="margin-top:4px">${esc(e.note)}</div>`:''}</div>
+     <div class="acts">${e.link?`<a class="btn small" href="${esc(e.link.u)}" target="_blank" rel="noopener noreferrer">${esc(e.link.t)} ↗</a>`:''}<button class="btn small danger admin-only" data-act="delev" data-id="${e.id}">Remove</button></div></article>`}
+  app.innerHTML=`<div class="head"><div><h1>Calendar</h1><div class="muted">Where Oscar is leading live sessions</div></div>
+   <button class="btn primary" data-act="book">Book Oscar</button></div>
+   ${html||'<div class="empty">No sessions are scheduled right now. Check back soon, or get in touch to arrange one.</div>'}
+   <div class="admin-only" style="margin-top:28px"><form class="f box" id="ef"><h3>Add a session</h3>
+    <label>Title<input type="text" id="e-title" required></label>
+    <div class="two"><label>Date<input type="date" id="e-date" required></label><label>Start time<input type="time" id="e-time" value="19:30" required></label></div>
+    <div class="two"><label>Venue<input type="text" id="e-venue" required></label><label>Town or city<input type="text" id="e-city" required></label></div>
+    <div class="two"><label>Type<select id="e-kind"><option>Concert</option><option>Workshop</option><option>Session</option><option>Private event</option></select></label>
+    <label>Booking or info link <span class="hint">Optional</span><input type="url" id="e-link" placeholder="https://"></label></div>
+    <label>Note <span class="hint">Optional</span><input type="text" id="e-note"></label>
+    <div><button class="btn primary" type="submit">Add to calendar</button></div></form></div>
+   <div class="note" style="margin-top:28px"><b>Want Oscar at your event?</b> <a href="#contact" data-act="book" style="color:var(--accent)">Send a booking enquiry</a>. Sample dates shown here are examples.</div>`;
+  const f=$('#ef');f.addEventListener('submit',ev=>{ev.preventDefault();const u=$('#e-link').value.trim();
+   events.push({id:nextId++,date:$('#e-date').value,time:$('#e-time').value,title:$('#e-title').value.trim(),kind:$('#e-kind').value,venue:$('#e-venue').value.trim(),city:$('#e-city').value.trim(),note:$('#e-note').value.trim(),link:u?{t:'More info',u}:null});vCal()});
+}
+
+/* ---------- About ---------- */
+let about={title:'About Oscar Nash',tag:'Songwriter, singer and leader of live singing sessions.',img:null,editing:false,
+ body:"Oscar writes songs about the sea, the seasons and the people in between. This is his songbook: every song he has written, with lyrics, chords and scores, so that choirs, friends and fellow musicians can learn them and sing along.\n\nMany of the songs were written with co-writers, and each one is credited for both words and music.\n\nOscar leads concerts, singing days and workshops in community halls, churches and living rooms. Anyone is welcome to listen, learn and play the songs."};
+function vAbout(){
+  const paras=about.body.split(/\n\s*\n/).filter(x=>x.trim()).map(x=>`<p>${esc(x.trim()).replace(/\n/g,'<br>')}</p>`).join('');
+  const portrait=about.img?`<div class="portrait" role="img" aria-label="Photo of Oscar" style="background-image:url(${about.img});background-size:cover;background-position:center"></div>`:`<div class="portrait" role="img" aria-label="Portrait placeholder">ON</div>`;
+  const edit=about.editing&&S.admin;
+  app.innerHTML=`<div class="about"><div class="head" style="margin:0"><div><h1>${esc(about.title)}</h1><p class="muted" style="margin:8px 0 0">${esc(about.tag)}</p></div>
+   <button class="btn admin-only" data-act="aboutedit">${edit?'Cancel':'Edit this page'}</button></div>
+  ${edit?`<form class="f box" id="af"><h3>Edit About page</h3>
+    <label>Page heading<input type="text" id="a-title" value="${esc(about.title)}"></label>
+    <label>Short line under the heading<input type="text" id="a-tag" value="${esc(about.tag)}"></label>
+    <label>Photo <span class="hint">Optional. Shown as a square.</span><span class="drop">${about.img?`<span class="cover" style="width:56px;background-image:url(${about.img})"></span>`:'<span class="cover none" style="width:56px">ON</span>'}<input type="file" id="a-img" accept="image/*">${about.img?'<button type="button" class="btn small" data-act="aboutnoimg">Remove photo</button>':''}</span></label>
+    <label>Text <span class="hint">Leave a blank line between paragraphs.</span><textarea id="a-body" style="min-height:220px">${esc(about.body)}</textarea></label>
+    <div style="display:flex;gap:10px"><button class="btn primary" type="submit">Save changes</button><button class="btn" type="button" data-act="aboutedit">Cancel</button></div></form>`:''}
+  <div class="about-grid">${portrait}<div class="prose">${paras}</div></div>
+  <div class="cols">
+   <div class="box"><h3>Listen and learn</h3><p class="small" style="margin:0">Stream any song here, read the lyrics, and follow the chords or score. Songs are for listening and singing, not for download.</p><div><button class="btn small" data-act="go" data-v="songs">Browse songs</button></div></div>
+   <div class="box"><h3>Come to a session</h3><p class="small" style="margin:0">See where Oscar will be leading music next.</p><div><button class="btn small" data-act="go" data-v="calendar">View calendar</button></div></div>
+   <div class="box"><h3>Get in touch</h3><p class="small" style="margin:0">Book Oscar, offer to play together, make a donation or send a message.</p><div><button class="btn small" data-act="book">Book Oscar</button> <button class="btn small" data-act="go" data-v="contact">Contact</button></div></div></div></div>`;
+  if(edit){
+   $('#a-img').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{about.title=$('#a-title').value;about.tag=$('#a-tag').value;about.body=$('#a-body').value;about.img=r.result;vAbout()};r.readAsDataURL(f)});
+   $('#af').addEventListener('submit',e=>{e.preventDefault();about.title=$('#a-title').value.trim()||about.title;about.tag=$('#a-tag').value.trim();about.body=$('#a-body').value;about.editing=false;vAbout()});
+  }
+}
+
+/* ---------- Contact ---------- */
+const REASONS=[
+ ['booking','Book Oscar','Concerts, workshops, services, private events.'],
+ ['play','Play or record together','Share a song idea or offer to collaborate.'],
+ ['donate','Donate','Support the music with a one-off gift.'],
+ ['message','Send a message','Say hello, ask a question, share feedback.']];
+function vContact(){
+  const r=S.reason;
+  const field=(id,l,ph='',t='text',req=false)=>`<label>${l}<input type="${t}" id="${id}" placeholder="${ph}" ${req?'required':''}></label>`;
+  const extra={
+   booking:`<div class="two">${field('c-date','Event date','','date')}${field('c-place','Venue and town','e.g. Village hall, Wells')}</div>
+     <label>Type of event<select id="c-type"><option>Concert</option><option>Workshop or singing day</option><option>Wedding or celebration</option><option>Church or community service</option><option>Something else</option></select></label>`,
+   play:`${field('c-inst','What do you play or sing?','e.g. cello, harmony vocals')}${field('c-sample','Link to your music','https://','url')}
+     <label>What would you like to do together?<select id="c-do"><option>Play live</option><option>Record a track</option><option>Write together</option><option>Not sure yet</option></select></label>`,
+   donate:`<div><div class="label" style="margin-bottom:6px">Amount</div><div class="amts" id="amts">${[10,25,50,100].map(n=>`<button type="button" class="chip" data-act="amt" data-n="${n}" aria-pressed="${n===25}">£${n}</button>`).join('')}<button type="button" class="chip" data-act="amt" data-n="0" aria-pressed="false">Other</button></div></div>
+     <div class="note small">The Donate button opens a secure payment page run by a payment provider. This site never sees or stores card details.</div>`,
+   message:''}[r];
+  const msgLabel={booking:'Tell us more',play:'Tell us about your idea',donate:'Add a message for Oscar (optional)',message:'Your message'}[r];
+  app.innerHTML=`<div class="head"><div><h1>Contact Oscar</h1><div class="muted">Choose what you'd like to do.</div></div></div>
+  <div class="reasons" role="radiogroup" aria-label="Reason for contact">${REASONS.map(([k,n,d])=>`<button class="reason" role="radio" aria-checked="${k===r}" data-act="reason" data-r="${k}"><b>${n}</b><span class="small muted">${d}</span></button>`).join('')}</div>
+  <div id="cform"><form class="f" id="cf">
+   ${r==='donate'?'':`<div class="two">${field('c-name','Your name','','text',true)}${field('c-email','Email address','','email',true)}</div>`}
+   ${extra}
+   <label>${msgLabel}<textarea id="c-msg" ${r==='message'?'required':''}></textarea></label>
+   <div><button class="btn primary" type="submit">${{booking:'Send booking enquiry',play:'Send my idea',donate:'Donate',message:'Send message'}[r]}</button></div>
+  </form></div>`;
+  $('#cf').addEventListener('submit',e=>{e.preventDefault();
+   $('#cform').innerHTML=`<div class="note"><h3>${r==='donate'?'Thank you for thinking of this':'Thanks, your message is ready to go'}</h3><p style="margin:6px 0 0">${r==='donate'?'In the live site this opens the secure payment page.':'In the live site this reaches Oscar by email, and you would get a confirmation. This mockup does not send anything.'}</p></div>`});
+}
+
+/* ---------- Events ---------- */
+function togglePlay(){
+  S.playing=!S.playing;const s=songById(S.id);
+  $('#pi').innerHTML=S.playing?'<path d="M4 2h3.5v14H4zM10.5 2H14v14h-3.5z"/>':'<path d="M4 2l12 7-12 7z"/>';
+  clearInterval(timer);
+  if(S.playing)timer=setInterval(()=>{S.pos=Math.min(s.len,S.pos+1);$('#seek').value=S.pos;$('#cur').textContent=fmt(S.pos);if(S.pos>=s.len){togglePlay();S.pos=0}},1000);
+}
+document.addEventListener('click',e=>{
+  const az=e.target.closest('[data-az]');if(az){e.preventDefault();const t=document.getElementById('L'+az.dataset.az);t&&t.scrollIntoView({behavior:'smooth'});return}
+  const el=e.target.closest('[data-act]');if(!el)return;const d=el.dataset;
+  const p=lists.find(x=>x.id===S.id);
+  switch(d.act){
+   case 'go':e.preventDefault();go(d.v);break;
+   case 'song':go('song',+d.id);break;
+   case 'list':e.preventDefault();S.view='collection';S.id=+d.id;clearInterval(timer);render();window.scrollTo(0,0);break;
+   case 'role':S.admin=!S.admin;about.editing=false;render();break;
+   case 'play':togglePlay();break;
+   case 'tab':S.tab=d.t;document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.t===d.t));
+     document.querySelectorAll('.pane').forEach(x=>x.hidden=x.id!=='p-'+d.t);break;
+   case 'mv':{const i=+d.i,j=i+ +d.d;[p.ids[i],p.ids[j]]=[p.ids[j],p.ids[i]];render();break}
+   case 'rm':p.ids.splice(+d.i,1);render();break;
+   case 'add':{const v=$('#addsel').value;if(v){p.ids.push(+v);render()}break}
+   case 'newlist':{const id=nextId++;lists.push({id,title:'New collection',img:false,hue:id%8,note:'',links:[],ids:[]});S.view='collection';S.id=id;render();break}
+   case 'delsong':songs=songs.filter(s=>s.id!==+d.id);lists.forEach(l=>l.ids=l.ids.filter(i=>i!==+d.id));go('songs');break;
+   case 'dellist':lists=lists.filter(l=>l.id!==+d.id);go('collections');break;
+   case 'book':e.preventDefault();S.reason='booking';go('contact');break;
+   case 'reason':S.reason=d.r;vContact();break;
+   case 'amt':document.querySelectorAll('#amts .chip').forEach(c=>c.setAttribute('aria-pressed',c===el));break;
+   case 'delev':events=events.filter(x=>x.id!==+d.id);vCal();break;
+   case 'addcol':{const q=lists.find(x=>x.id===+$('#addcol').value);if(q&&!q.ids.includes(+d.id)){q.ids.push(+d.id);vSong()}break}
+   case 'addlink':{const u=$('#lk-u').value.trim();if(u&&p){p.links.push({t:$('#lk-t').value,u});vList()}break}
+   case 'rmlink':p.links.splice(+d.i,1);vList();break;
+   case 'aboutedit':about.editing=!about.editing;vAbout();break;
+   case 'aboutnoimg':about.title=$('#a-title').value;about.tag=$('#a-tag').value;about.body=$('#a-body').value;about.img=null;vAbout();break;
+   case 'stub':el.textContent='Opens an edit form in the real app';el.disabled=true;break;
+  }
+});
+const h=location.hash.slice(1);if(['calendar','contact','about','collections'].includes(h))S.view=h;
+render();
+</script>
+</html>

@@ -1,43 +1,47 @@
 /*
-  Brand: taken from the "Live Music Evening" poster and the wedding photo.
-  Deep harbour navy ground, warm white type, daffodil gold accent, jacket teal for light mode.
-  Type: Syne ExtraBold for headings (wide, heavy, like the poster title), Jost for body and wide-tracked caps,
-  Mrs Saint Delafield for the brushed "music" in the logo, IBM Plex Mono for chords.
+  Brand: taken from the "Live Music Evening" poster and the photos.
+  The colour comes from the groom's velvet jacket (a deep peacock blue, about #003A5F in shadow and #014E7A in light),
+  warmed with daffodil gold and the coral of the bouquet. Clean warm-white pages, bright accents.
+  Type: Archivo ExtraBold (stretched wide, like the poster title) for headings, Inter for body text,
+  Monsieur La Doulaise for the brushed "music" in the logo, IBM Plex Mono for chords.
 */
 :root {
-  --bg: #0b1f2c;
-  --surface: #12303f;
-  --sunk: #081824;
-  --ink: #f5f2ec;
-  --muted: #9db3be;
-  --line: #24485a;
-  --accent: #e7c566;
-  --accent-ink: #14212a;
-  --accent-soft: #1c3f4f;
-  --warn: #f0b35f;
-  --warn-soft: #3a2a10;
-  --danger: #ff9b8f;
-  --f-display: 'Syne', 'Trebuchet MS', sans-serif;
-  --f-body: 'Jost', 'Segoe UI', sans-serif;
-  --f-script: 'Mrs Saint Delafield', cursive;
+  --bg: #fbfaf7;
+  --surface: #ffffff;
+  --sunk: #eef2f5;
+  --ink: #0a2540;
+  --muted: #5a6f82;
+  --line: #dce4ea;
+  --accent: #0a5f8f;
+  --accent-ink: #ffffff;
+  --accent-soft: #def0f9;
+  --warm: #e0662b;
+  --gold: #f5b82e;
+  --warn: #8a4b00;
+  --warn-soft: #fdeccb;
+  --danger: #c0291f;
+  --f-display: 'Archivo', 'Arial Black', sans-serif;
+  --f-body: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --f-script: 'Monsieur La Doulaise', cursive;
   --f-mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
-  color-scheme: dark;
+  color-scheme: light;
 }
-@media (prefers-color-scheme: light) {
+@media (prefers-color-scheme: dark) {
   :root {
-    --bg: #f3f6f7;
-    --surface: #ffffff;
-    --sunk: #e4ebee;
-    --ink: #0b1f2c;
-    --muted: #55696f;
-    --line: #cdd9de;
-    --accent: #0d6a78;
-    --accent-ink: #ffffff;
-    --accent-soft: #d8ecee;
-    --warn: #8a4b00;
-    --warn-soft: #fbe9cf;
-    --danger: #b3261e;
-    color-scheme: light;
+    --bg: #05304d;
+    --surface: #0a4065;
+    --sunk: #042439;
+    --ink: #fffaf2;
+    --muted: #b3cde0;
+    --line: #1f6089;
+    --accent: #ffc247;
+    --accent-ink: #1a2a38;
+    --accent-soft: #0f4d78;
+    --warm: #ff9a73;
+    --warn: #ffc989;
+    --warn-soft: #4a3510;
+    --danger: #ff9b8f;
+    color-scheme: dark;
   }
 }
 * { box-sizing: border-box; }
@@ -47,7 +51,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; }
 a { color: var(--accent); }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-h1, h2, h3 { font-family: var(--f-display); font-weight: 800; line-height: 1.12; margin: 0; text-wrap: balance; text-transform: uppercase; letter-spacing: .01em; }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 800; font-stretch: 125%; line-height: 1.12; margin: 0; text-wrap: balance; text-transform: uppercase; letter-spacing: .01em; }
 h1 { font-size: clamp(1.7rem, 4.5vw, 2.4rem); }
 h2 { font-size: 1.3rem; }
 h3 { font-size: 1rem; }
@@ -59,13 +63,13 @@ h3 { font-size: 1rem; }
 /* header */
 header.top { position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line); padding-top: env(safe-area-inset-top, 0px); }
 .bar { display: flex; align-items: center; gap: 12px 20px; flex-wrap: wrap; padding-block: 12px; }
-.brand { font-family: var(--f-display); font-weight: 800; font-size: 1.15rem; letter-spacing: .06em; text-transform: uppercase; color: var(--ink); text-decoration: none; display: flex; align-items: baseline; gap: 8px; }
-.brand em { font-family: var(--f-script); font-style: normal; font-weight: 400; font-size: 2.1rem; text-transform: none; letter-spacing: 0; color: var(--accent); line-height: .6; }
+.brand { font-family: var(--f-display); font-weight: 800; font-stretch: 125%; font-size: 1.05rem; letter-spacing: .06em; text-transform: uppercase; color: var(--ink); text-decoration: none; display: flex; align-items: baseline; gap: 8px; }
+.brand em { font-family: var(--f-script); font-style: normal; font-weight: 400; font-stretch: 100%; font-size: 2.5rem; text-transform: none; letter-spacing: 0; color: var(--warm); line-height: .6; }
 nav.main { display: flex; gap: 2px; flex: 1; min-width: 0; flex-wrap: wrap; }
 nav.main a { padding: 6px 12px; color: var(--muted); text-decoration: none; text-transform: uppercase; letter-spacing: .14em; font-size: .78rem; font-weight: 500; border-bottom: 2px solid transparent; }
 nav.main a:hover { color: var(--ink); }
-nav.main a.active { color: var(--ink); border-color: var(--accent); }
-.adminbar { background: var(--accent); color: var(--accent-ink); font-size: .85rem; }
+nav.main a.active { color: var(--ink); border-color: var(--warm); }
+.adminbar { background: var(--gold); color: #1a2a38; font-size: .85rem; }
 .adminbar .wrap { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; padding-block: 6px; }
 .adminbar button, .adminbar a { background: none; border: 0; color: inherit; text-decoration: underline; padding: 0; }
 .draftbar { background: var(--warn-soft); color: var(--warn); font-size: .85rem; padding: 6px 0; }
@@ -103,7 +107,7 @@ mark { background: var(--warn-soft); color: var(--warn); border-radius: 2px; }
 .az { position: sticky; top: 90px; display: flex; flex-direction: column; font-size: .68rem; font-weight: 600; text-align: center; color: var(--muted); }
 .az a { padding: 1px 0; text-decoration: none; color: inherit; }
 .az a.off { opacity: .3; pointer-events: none; }
-.letter { font-family: var(--f-display); font-weight: 800; font-size: 1.1rem; color: var(--accent); padding: 16px 0 4px; border-bottom: 1px solid var(--line); scroll-margin-top: 100px; }
+.letter { font-family: var(--f-display); font-weight: 800; font-stretch: 125%; font-size: 1.1rem; color: var(--accent); padding: 16px 0 4px; border-bottom: 1px solid var(--line); scroll-margin-top: 100px; }
 .row { display: flex; gap: 14px; align-items: center; width: 100%; text-align: left; background: none; border: 0; border-bottom: 1px solid var(--line); padding: 10px 4px; text-decoration: none; color: inherit; }
 .row:hover { background: var(--accent-soft); }
 .row .cover { width: 52px; font-size: 1.1rem; }
@@ -177,7 +181,7 @@ form.f textarea { min-height: 110px; resize: vertical; }
 /* calendar */
 .event { display: flex; gap: 16px; align-items: flex-start; padding: 16px 0; border-bottom: 1px solid var(--line); }
 .event .date { width: 56px; flex: none; text-align: center; background: var(--accent-soft); border-radius: 6px; padding: 6px 0; display: flex; flex-direction: column; line-height: 1.1; }
-.event .date b { font-family: var(--f-display); font-weight: 800; font-size: 1.5rem; color: var(--accent); }
+.event .date b { font-family: var(--f-display); font-weight: 800; font-stretch: 125%; font-size: 1.5rem; color: var(--accent); }
 .event .date span { font-size: .72rem; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; }
 .event .what { flex: 1; min-width: 0; }
 .evtop { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }

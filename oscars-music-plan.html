@@ -1,0 +1,97 @@
+<title>Oscar's Music Build Plan</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: single readable column (760px), sections separated by headings; tables scroll sideways on narrow screens. */
+:root{--bg:#f2f5f6;--surface:#ffffff;--sunk:#e6ecee;--ink:#13232b;--muted:#5b6b73;--line:#d3dcdf;--accent:#0e6f73;--accent-soft:#d6ecec;
+ --f-display:'Bricolage Grotesque','Trebuchet MS',sans-serif;--f-body:'Source Sans 3','Segoe UI',sans-serif;--f-mono:'IBM Plex Mono',ui-monospace,Menlo,monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1a1f;--surface:#17262d;--sunk:#0b1418;--ink:#e6eef0;--muted:#97a9b0;--line:#2a3d46;--accent:#4cc3c4;--accent-soft:#16393c;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1a1f;--surface:#17262d;--sunk:#0b1418;--ink:#e6eef0;--muted:#97a9b0;--line:#2a3d46;--accent:#4cc3c4;--accent-soft:#16393c;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px));padding-block:40px 72px}
+.doc{max-width:760px;margin:0 auto;display:grid;gap:36px}
+h1,h2,h3{font-family:var(--f-display);line-height:1.15;text-wrap:balance;margin:0}
+h1{font-size:2.2rem} h2{font-size:1.4rem} h3{font-size:1.05rem}
+p{margin:0;max-width:68ch} .muted{color:var(--muted)} .small{font-size:.875rem}
+section{display:grid;gap:12px}
+ul{margin:0;padding-left:20px;display:grid;gap:6px}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:grid;gap:6px;align-content:start}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+code{font-family:var(--f-mono);font-size:.85em;background:var(--sunk);padding:1px 5px;border-radius:4px}
+.decided{display:flex;gap:8px;flex-wrap:wrap}
+.pill{background:var(--accent-soft);color:var(--accent);font-weight:600;font-size:.875rem;border-radius:999px;padding:3px 12px}
+.phase{display:grid;grid-template-columns:92px 1fr;gap:6px 18px;padding:14px 0;border-top:1px solid var(--line)}
+.when{font-family:var(--f-mono);font-size:.85rem;color:var(--accent)}
+@media(max-width:560px){.phase{grid-template-columns:1fr}}
+</style>
+
+<div class="doc">
+<header><div class="small muted" style="letter-spacing:.08em;text-transform:uppercase;font-weight:600;margin-bottom:6px">Build plan</div>
+<h1>Oscar's Music</h1>
+<p class="muted" style="margin-top:10px">A public songbook and booking site for Oscar Nash. It is designed to be cheap to run and simple for Oscar and a couple of other admins to look after without a developer on call. Estimated effort: five weeks part-time to a launch-ready first version.</p></header>
+
+<section><h2>Decisions so far</h2>
+<div class="decided"><span class="pill">Public site</span><span class="pill">Streaming only, no downloads</span><span class="pill">No co-writer approval step</span><span class="pill">Playlists are called Collections</span></div>
+<p class="small muted">Streaming only means audio plays in the page and scores are shown for viewing. Browsers can still be used to save files if someone is determined, so this deters casual copying and does not prevent it.</p></section>
+
+<section><h2>What the site includes</h2><div class="cols">
+ <div class="box"><h3>For visitors</h3><ul><li>Songs and Collections, A to Z, with search by title or co-writer</li><li>Song page with audio player and Lyrics, Chords and Score tabs</li><li>Optional links to YouTube, Spotify, Apple Music and others, on both songs and Collections</li><li>Calendar of live sessions with booking or info links</li><li>About page and a Contact page</li></ul></div>
+ <div class="box"><h3>For admins</h3><ul><li>Sign in by email link</li><li>Add and edit songs, with optional image, audio, lyrics, chords, score and streaming links</li><li>Put any song in any number of Collections and set the order in each</li><li>Add and remove calendar sessions</li><li>Add YouTube, Spotify or other recording links to a Collection, for example a whole live session</li><li>Edit the About page text and photo without a developer</li></ul></div>
+ <div class="box"><h3>Contact page</h3><ul><li>Book Oscar (also a button in the header)</li><li>Offer to play or record together</li><li>Donate</li><li>Send a message</li></ul></div></div></section>
+
+<section><h2>Recommended stack</h2>
+<div class="tablewrap"><table><thead><tr><th>Layer</th><th>Choice</th><th>Why</th></tr></thead><tbody>
+ <tr><td>Front end</td><td>Next.js (React) on Vercel</td><td>Fast public pages that search engines can read, so song titles are findable. Free tier is enough to start.</td></tr>
+ <tr><td>Database</td><td>Supabase Postgres</td><td>Songs, people and ordered Collections suit a relational database. Built-in text search.</td></tr>
+ <tr><td>Admin sign-in</td><td>Supabase Auth, email magic link</td><td>No passwords. Only addresses on the admin list can edit.</td></tr>
+ <tr><td>Files</td><td>Supabase Storage</td><td>Audio, images and scores. Move audio to Cloudflare R2 if storage grows past a few GB.</td></tr>
+ <tr><td>Email from Contact form</td><td>Resend</td><td>Delivers enquiries to Oscar's inbox. Bot protection with Cloudflare Turnstile.</td></tr>
+ <tr><td>Donations</td><td>Stripe Payment Link or PayPal</td><td>The Donate button opens the provider's own payment page, so the site never touches card details.</td></tr>
+ <tr><td>Running cost</td><td>About £0–20 a month</td><td>Free tiers at first, plus a domain name. The Supabase paid plan if audio passes 1 GB.</td></tr></tbody></table></div></section>
+
+<section><h2>Data model</h2>
+<div class="tablewrap"><table><thead><tr><th>Table</th><th>Key fields</th></tr></thead><tbody>
+ <tr><td><code>songs</code></td><td><code>id, title, sort_title, note, key, image_url, audio_url, lyrics, chords, score_url</code></td></tr>
+ <tr><td><code>song_links</code></td><td><code>song_id, service, url</code> (YouTube, Spotify, Apple Music, other). Zero or more per song.</td></tr>
+ <tr><td><code>people</code></td><td><code>id, name</code>. One row per co-writer, so spellings stay consistent.</td></tr>
+ <tr><td><code>song_credits</code></td><td><code>song_id, person_id, role</code>, where role is <code>lyrics</code> or <code>music</code></td></tr>
+ <tr><td><code>collections</code></td><td><code>id, title, sort_title, note, image_url</code></td></tr>
+ <tr><td><code>collection_songs</code></td><td><code>collection_id, song_id, position</code>. A song can appear in many Collections, and each Collection has its own order.</td></tr>
+ <tr><td><code>collection_links</code></td><td><code>collection_id, service, url</code>. Recordings of a whole session or album, zero or more per Collection.</td></tr>
+ <tr><td><code>about_page</code></td><td>A single row: <code>heading, tagline, body, image_url</code>. Admins edit it from the site itself.</td></tr>
+ <tr><td><code>sessions</code></td><td><code>id, title, starts_at, venue, city, kind, note, link_url</code> for the Calendar</td></tr>
+ <tr><td><code>enquiries</code></td><td><code>id, reason, name, email, details, created_at</code>. Kept so nothing is lost if an email fails.</td></tr>
+ <tr><td><code>admins</code></td><td><code>email</code></td></tr></tbody></table></div>
+<p class="small muted"><code>sort_title</code> drops a leading “The” or “A”, so “The Bell Tower Waltz” files under B. Search uses a Postgres index over titles and credited names. Past calendar sessions are hidden from visitors but kept.</p></section>
+
+<section><h2>Timeline</h2>
+<div>
+ <div class="phase"><div class="when">Week 1</div><div><b>Foundations.</b> Project setup, database, admin sign-in, deployment. Songs list with A to Z and search working on sample data.</div></div>
+ <div class="phase"><div class="when">Week 2</div><div><b>Song page.</b> Audio player, three tabs, score viewer, streaming links, square image handling, phone layout.</div></div>
+ <div class="phase"><div class="when">Week 3</div><div><b>Admin tools.</b> Add and edit songs, file uploads with progress, co-writer autocomplete, Collections with ordering and notes.</div></div>
+ <div class="phase"><div class="when">Week 4</div><div><b>Calendar and Contact.</b> Sessions with booking links, the Book Oscar button, the four-way contact form with email delivery and spam protection, donation link, About page.</div></div>
+ <div class="phase"><div class="when">Week 5</div><div><b>Polish and launch.</b> Import Oscar's existing songs, accessibility check, custom domain, backups, a one-page admin guide.</div></div></div></section>
+
+<section><h2>Getting it online</h2>
+<p>The mockup is a prototype that shows how the site looks and works. It does not save anything, so the real site has to be built and hosted before Oscar can fill it in. The route below gets him entering songs about halfway through the build, in the same database that goes live, so nothing is re-typed.</p>
+<div class="tablewrap"><table><thead><tr><th>Step</th><th>What happens</th><th>Who</th></tr></thead><tbody>
+ <tr><td>1. Accounts</td><td>Create GitHub, Vercel, Supabase and Resend accounts under an email address Oscar and Tim both control, and buy the domain name. Oscar's organisation owns everything, so nothing depends on one person.</td><td>Tim and Oscar, about an hour</td></tr>
+ <tr><td>2. Private preview</td><td>Deploy the first working version to a temporary web address in week 1. It is hidden from search engines and shows a “coming soon” note to visitors until launch.</td><td>Build</td></tr>
+ <tr><td>3. Oscar starts entering songs</td><td>When the admin tools are ready (end of week 3), Oscar and the other admins sign in and add songs, Collections, calendar dates and the About text. Feedback goes straight into the next week's work.</td><td>Oscar and admins</td></tr>
+ <tr><td>4. Launch</td><td>Connect the domain, remove the “coming soon” note, test the Contact form and donation link end to end, and share the address.</td><td>Build, then Oscar announces</td></tr>
+ <tr><td>5. After launch</td><td>Admins run the site day to day. A one-page guide covers adding songs, Collections, sessions and the About page.</td><td>Admins</td></tr></tbody></table></div>
+<p class="small muted"><b>Alternative.</b> A website builder such as Squarespace or WordPress would be online in days, but searching by co-writer, ordering songs inside Collections and the three-tab song page would each need workarounds or paid plugins. A custom build costs more up front and fits what Oscar described.</p></section>
+
+<section><h2>Open questions</h2>
+<ul><li><b>Donations.</b> Which provider does Oscar already have an account with? Does he want a recurring option as well as one-off gifts?</li>
+<li><b>Score format.</b> A PDF per song is simplest. Showing scores generated from MusicXML is possible later.</li>
+<li><b>Audio size.</b> Compress to MP3 on upload so playback is quick on phones.</li>
+<li><b>Contact inbox.</b> Which email address should enquiries go to, and should booking enquiries also go to a second person?</li>
+<li><b>About page.</b> Oscar's text and a photo. The mockup uses placeholders, and admins can replace both once the site is live.</li><li><b>Domain name.</b> For example oscarsmusic.com or oscarnash.com. Worth checking what is free.</li>
+<li><b>Later ideas.</b> Printable set lists, shareable Collection links, a mailing list sign-up.</li></ul></section>
+</div>
