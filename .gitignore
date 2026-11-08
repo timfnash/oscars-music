@@ -5,3 +5,4 @@ dist
 supabase/.temp
 supabase/.branches
 ADMIN-LOGINS.local.txt
+private/
