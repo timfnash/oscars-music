@@ -2,7 +2,7 @@
   Brand: taken from the "Live Music Evening" poster and the photos.
   The colour comes from the groom's velvet jacket (a deep peacock blue, about #003A5F in shadow and #014E7A in light),
   warmed with daffodil gold and the coral of the bouquet. Clean warm-white pages, bright accents.
-  Type: Bricolage Grotesque Bold for headings and the logo, Inter for body text, IBM Plex Mono for chords.
+  Type: Bricolage Grotesque Bold for headings and the logo, Source Sans 3 for body text, IBM Plex Mono for chords.
 */
 :root {
   --bg: #fbfaf7;
@@ -20,7 +20,7 @@
   --warn-soft: #fdeccb;
   --danger: #c0291f;
   --f-display: 'Bricolage Grotesque', 'Trebuchet MS', sans-serif;
-  --f-body: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --f-body: 'Source Sans 3', 'Segoe UI', system-ui, sans-serif;
   --f-mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
   color-scheme: light;
 }
