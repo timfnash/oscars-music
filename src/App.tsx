@@ -30,7 +30,7 @@ function Shell() {
       </div></header>
       {isAdmin && (
         <div className="adminbar"><div className="wrap">
-          <b>Admin mode</b><span>You can edit this site.</span><Link to="/admin">Admin page</Link>
+          <span>You're in admin mode.</span><Link to="/admin">Admin page</Link><span aria-hidden="true">|</span>
           <button onClick={() => supabase.auth.signOut()}>Sign out</button>
         </div></div>
       )}
@@ -49,7 +49,7 @@ function Shell() {
           <Route path="*" element={<div className="empty">Page not found. <Link to="/">Back to songs</Link></div>} />
         </Routes>
       </main>
-      <footer><div className="wrap"><span>{years} © Oscar KF Nash</span><span>{isAdmin && <Link to="/admin">Admin</Link>}</span></div></footer>
+      <footer><div className="wrap"><span>{years} © Oscar KF Nash</span></div></footer>
       <div className="draftbar"><div className="wrap">Preview. This site is being filled in and is not listed on search engines yet.</div></div>
     </>
   )
