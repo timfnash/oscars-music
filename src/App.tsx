@@ -34,7 +34,6 @@ function Shell() {
           <button onClick={() => supabase.auth.signOut()}>Sign out</button>
         </div></div>
       )}
-      <div className="draftbar"><div className="wrap">Preview. This site is being filled in and is not listed on search engines yet.</div></div>
       <main className="wrap">
         <Routes>
           <Route path="/" element={<Songs />} />
@@ -51,6 +50,7 @@ function Shell() {
         </Routes>
       </main>
       <footer><div className="wrap"><span>{years} © Oscar KF Nash</span><span>{isAdmin && <Link to="/admin">Admin</Link>}</span></div></footer>
+      <div className="draftbar"><div className="wrap">Preview. This site is being filled in and is not listed on search engines yet.</div></div>
     </>
   )
 }
