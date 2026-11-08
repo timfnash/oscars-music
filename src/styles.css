@@ -61,7 +61,7 @@ h3 { font-size: 1rem; }
 .caps, .label { font-size: .75rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
 
 /* header */
-header.top { position: sticky; top: 0; z-index: 5; background: var(--bar); color: var(--bar-ink); border-bottom: 1px solid var(--line); padding-top: env(safe-area-inset-top, 0px); }
+header.top { position: sticky; top: 0; z-index: 5; background: var(--bar); color: var(--bar-ink); padding-top: env(safe-area-inset-top, 0px); }
 .bar { display: flex; align-items: center; gap: 12px 20px; flex-wrap: wrap; padding-block: 12px; }
 .brand { font-family: var(--f-display); font-weight: 700; font-size: 1.2rem; letter-spacing: .04em; text-transform: uppercase; color: var(--bar-ink); text-decoration: none; display: flex; align-items: baseline; gap: 7px; }
 .brand em { font-style: normal; color: var(--gold); }
@@ -76,7 +76,7 @@ nav.main a.active { opacity: 1; border-color: var(--gold); }
 .draftbar { background: var(--gold); color: var(--on-gold); font-size: .85rem; padding: 6px 0; }
 
 main { padding-block: 32px 72px; min-height: 60vh; }
-footer { background: var(--bar); color: var(--bar-ink); border-top: 1px solid var(--line); padding-block: 22px; font-size: .85rem; }
+footer { background: var(--bar); color: var(--bar-ink); padding-block: 22px; font-size: .85rem; }
 footer a { color: var(--gold); }
 footer .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 
