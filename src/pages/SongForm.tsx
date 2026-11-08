@@ -4,7 +4,7 @@ import { useData } from '../lib/store'
 import { supabase, uploadMedia, mediaUrl } from '../lib/supabase'
 import { ImagePick } from '../components/Bits'
 import LinkEditor from '../components/LinkEditor'
-import { names } from '../lib/util'
+import NamesInput from '../components/NamesInput'
 import type { Link as L } from '../lib/types'
 
 export default function SongForm() {
@@ -12,7 +12,9 @@ export default function SongForm() {
   const nav = useNavigate()
   const { songs, isAdmin, authReady, reload } = useData()
   const existing = songs.find((s) => s.id === id)
-  const [f, setF] = useState({ title: '', lw: '', mw: '', note: '', key: '', lyrics: '', chords: '' })
+  const [f, setF] = useState({ title: '', note: '', key: '', lyrics: '', chords: '' })
+  const [lw, setLw] = useState<string[]>([])
+  const [mw, setMw] = useState<string[]>([])
   const [links, setLinks] = useState<L[]>([])
   const [img, setImg] = useState<File | null>(null)
   const [audio, setAudio] = useState<File | null>(null)
@@ -23,20 +25,21 @@ export default function SongForm() {
 
   useEffect(() => {
     if (!existing) return
-    setF({ title: existing.title, lw: existing.lyrics_by.join(', '), mw: existing.music_by.join(', '), note: existing.note,
-      key: existing.musical_key, lyrics: existing.lyrics, chords: existing.chords })
+    setF({ title: existing.title, note: existing.note, key: existing.musical_key, lyrics: existing.lyrics, chords: existing.chords })
+    setLw(existing.lyrics_by); setMw(existing.music_by)
     setLinks(existing.links)
   }, [existing?.id]) // eslint-disable-line
 
   if (!authReady) return <div className="empty">Loading…</div>
   if (!isAdmin) return <div className="empty">Please <Link to="/admin">sign in as an admin</Link> to edit songs.</div>
 
+  const known = [...new Set(songs.flatMap((s) => [...s.lyrics_by, ...s.music_by]))].sort((a, b) => a.localeCompare(b))
   const set = (k: keyof typeof f) => (e: { target: { value: string } }) => setF({ ...f, [k]: e.target.value })
   const submit = async (e: FormEvent) => {
     e.preventDefault(); setBusy(true); setErr('')
     try {
       const row: Record<string, unknown> = {
-        title: f.title.trim(), lyrics_by: names(f.lw), music_by: names(f.mw), note: f.note.trim(), musical_key: f.key.trim(),
+        title: f.title.trim(), lyrics_by: lw, music_by: mw, note: f.note.trim(), musical_key: f.key.trim(),
         lyrics: f.lyrics.trim(), chords: f.chords.replace(/\s+$/, ''), links,
       }
       if (img) row.image_path = await uploadMedia(img, 'images'); else if (clear.img) row.image_path = null
@@ -57,8 +60,11 @@ export default function SongForm() {
       <form className="f" onSubmit={submit}>
         <label>Title<input type="text" required value={f.title} onChange={set('title')} /></label>
         <div className="two">
-          <label>Lyrics co-writers<input type="text" value={f.lw} onChange={set('lw')} placeholder="Names, separated by commas" /><span className="hint">Leave blank for an instrumental.</span></label>
-          <label>Music co-writers<input type="text" value={f.mw} onChange={set('mw')} placeholder="Names, separated by commas" /></label>
+          <div style={{ display: 'grid', gap: 4 }}><span style={{ fontWeight: 500 }}>Lyrics co-writers</span>
+            <NamesInput value={lw} onChange={setLw} suggestions={known} placeholder="Type a name, press Enter" />
+            <span className="hint" style={{ color: 'var(--muted)', fontSize: '.88rem' }}>Leave blank for an instrumental.</span></div>
+          <div style={{ display: 'grid', gap: 4 }}><span style={{ fontWeight: 500 }}>Music co-writers</span>
+            <NamesInput value={mw} onChange={setMw} suggestions={known} placeholder="Type a name, press Enter" /></div>
         </div>
         <label>Key <span className="hint">Optional</span><input type="text" value={f.key} onChange={set('key')} placeholder="e.g. G major" /></label>
         <label>Note<textarea value={f.note} onChange={set('note')} placeholder="Background, performance tips, who it's for" /></label>
