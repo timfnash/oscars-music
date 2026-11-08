@@ -12,6 +12,8 @@ import Contact from './pages/Contact'
 import Admin from './pages/Admin'
 
 function Shell() {
+  const year = new Date().getFullYear()
+  const years = year > 2026 ? `2026-${year}` : '2026'
   const { isAdmin } = useData()
   return (
     <>
@@ -48,7 +50,7 @@ function Shell() {
           <Route path="*" element={<div className="empty">Page not found. <Link to="/">Back to songs</Link></div>} />
         </Routes>
       </main>
-      <footer><div className="wrap"><span>© Oscar Nash</span><span>{isAdmin && <Link to="/admin">Admin</Link>}</span></div></footer>
+      <footer><div className="wrap"><span>{years} © Oscar KF Nash</span><span>{isAdmin && <Link to="/admin">Admin</Link>}</span></div></footer>
     </>
   )
 }
