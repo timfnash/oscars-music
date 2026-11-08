@@ -23,6 +23,7 @@ npx supabase secrets set RESEND_API_KEY=... CONTACT_TO=oscar@nash.je CONTACT_FRO
 ```
 
 ## Admins
+The sign-in page is at `/#/admin`. It is not linked from the public pages.
 Admins are the emails in the `admins` table. Sign-ups are switched off, so an admin also needs an Auth user
 (Supabase dashboard > Authentication > Users > Add user).
 

@@ -12,7 +12,7 @@ import Contact from './pages/Contact'
 import Admin from './pages/Admin'
 
 function Shell() {
-  const { isAdmin, auth } = useData()
+  const { isAdmin } = useData()
   return (
     <>
       <header className="top"><div className="wrap bar">
@@ -48,7 +48,7 @@ function Shell() {
           <Route path="*" element={<div className="empty">Page not found. <Link to="/">Back to songs</Link></div>} />
         </Routes>
       </main>
-      <footer><div className="wrap"><span>© Oscar Nash</span><span>{auth ? <Link to="/admin">Admin</Link> : <Link to="/admin">Admin sign in</Link>}</span></div></footer>
+      <footer><div className="wrap"><span>© Oscar Nash</span><span>{isAdmin && <Link to="/admin">Admin</Link>}</span></div></footer>
     </>
   )
 }
