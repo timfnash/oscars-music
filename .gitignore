@@ -1,0 +1,7 @@
+node_modules
+dist
+.env
+.env.local
+supabase/.temp
+supabase/.branches
+ADMIN-LOGINS.local.txt
