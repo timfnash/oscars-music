@@ -64,7 +64,8 @@ export default function SongForm() {
             <NamesInput value={lw} onChange={setLw} suggestions={known} placeholder="Type a name, press Enter" />
             <span className="hint" style={{ color: 'var(--muted)', fontSize: '.88rem' }}>Leave blank for an instrumental.</span></div>
           <div style={{ display: 'grid', gap: 4 }}><span style={{ fontWeight: 500 }}>Music co-writers</span>
-            <NamesInput value={mw} onChange={setMw} suggestions={known} placeholder="Type a name, press Enter" /></div>
+            <NamesInput value={mw} onChange={setMw} suggestions={known} placeholder="Type a name, press Enter" />
+            <span className="hint" style={{ color: 'var(--muted)', fontSize: '.88rem' }}>Spotted a misspelled name in the suggestions? Fix it under Co-writers on the <Link to="/admin">Admin page</Link>.</span></div>
         </div>
         <label>Key <span className="hint">Optional</span><input type="text" value={f.key} onChange={set('key')} placeholder="e.g. G major" /></label>
         <label>Note<textarea value={f.note} onChange={set('note')} placeholder="Background, performance tips, who it's for" /></label>

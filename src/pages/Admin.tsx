@@ -2,10 +2,72 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { useData } from '../lib/store'
 import { supabase } from '../lib/supabase'
-import type { Enquiry } from '../lib/types'
+import type { Enquiry, Song } from '../lib/types'
+
+/** Lists every co-writer name in use, with rename (fixes or merges spellings) and remove (takes the name off every song). */
+function Cowriters({ songs, reload }: { songs: Song[]; reload: () => Promise<void> }) {
+  const [editing, setEditing] = useState<string | null>(null)
+  const [text, setText] = useState('')
+  const [confirm, setConfirm] = useState<string | null>(null)
+  const [busy, setBusy] = useState(false)
+  const [err, setErr] = useState('')
+
+  const map = new Map<string, Set<string>>()
+  for (const s of songs) for (const n of [...s.lyrics_by, ...s.music_by]) (map.get(n) ?? map.set(n, new Set()).get(n)!).add(s.id)
+  const names = [...map.keys()].sort((a, b) => a.localeCompare(b))
+
+  const apply = async (name: string, fn: (arr: string[]) => string[]) => {
+    setBusy(true); setErr('')
+    const dedupe = (a: string[]) => a.filter((n, i) => a.findIndex((m) => m.toLowerCase() === n.toLowerCase()) === i)
+    const results = await Promise.all(songs.filter((s) => s.lyrics_by.includes(name) || s.music_by.includes(name)).map((s) =>
+      supabase.from('songs').update({ lyrics_by: dedupe(fn(s.lyrics_by)), music_by: dedupe(fn(s.music_by)) }).eq('id', s.id)))
+    const bad = results.find((r) => r.error)
+    if (bad?.error) setErr(bad.error.message)
+    await reload(); setBusy(false); setEditing(null); setConfirm(null)
+  }
+  const rename = (old: string) => {
+    const next = text.trim().replace(/\s+/g, ' ')
+    if (!next || next === old) return setEditing(null)
+    const known = names.find((n) => n.toLowerCase() === next.toLowerCase() && n !== old) || next
+    apply(old, (arr) => arr.map((n) => (n === old ? known : n)))
+  }
+
+  return (
+    <section>
+      <h2 style={{ marginBottom: 6 }}>Co-writers</h2>
+      <p className="muted small" style={{ margin: '0 0 12px' }}>Every name used on a song. Rename fixes a spelling on every song at once, and merges two spellings if you rename one to match the other. Remove takes the name off every song it is on.</p>
+      {err && <div className="error" role="alert">{err}</div>}
+      {names.length === 0 ? <div className="muted">No co-writers yet. Names appear here once they are added to a song.</div> : (
+        <div style={{ overflowX: 'auto' }}><table><thead><tr><th>Name</th><th>Songs</th><th /></tr></thead><tbody>
+          {names.map((n) => (
+            <tr key={n}>
+              <td>{editing === n
+                ? <input className="inp" style={{ maxWidth: 260 }} aria-label={`New spelling for ${n}`} value={text} autoFocus onChange={(e) => setText(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') rename(n); if (e.key === 'Escape') setEditing(null) }} />
+                : n}</td>
+              <td>{map.get(n)!.size}</td>
+              <td>
+                {editing === n ? (
+                  <span className="row-admin"><button className="btn small primary" disabled={busy} onClick={() => rename(n)}>Save</button><button className="btn small" onClick={() => setEditing(null)}>Cancel</button></span>
+                ) : confirm === n ? (
+                  <span className="row-admin"><span className="small">Remove from {map.get(n)!.size} song{map.get(n)!.size === 1 ? '' : 's'}?</span>
+                    <button className="btn small danger" disabled={busy} onClick={() => apply(n, (arr) => arr.filter((x) => x !== n))}>Yes, remove</button>
+                    <button className="btn small" onClick={() => setConfirm(null)}>Keep</button></span>
+                ) : (
+                  <span className="row-admin"><button className="btn small" onClick={() => { setEditing(n); setText(n); setConfirm(null) }}>Rename</button>
+                    <button className="btn small danger" onClick={() => { setConfirm(n); setEditing(null) }}>Remove</button></span>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody></table></div>
+      )}
+    </section>
+  )
+}
 
 export default function Admin() {
-  const { auth, isAdmin, authReady } = useData()
+  const { auth, isAdmin, authReady, songs, reload } = useData()
   const [email, setEmail] = useState(''); const [pw, setPw] = useState('')
   const [err, setErr] = useState(''); const [busy, setBusy] = useState(false)
   const [enq, setEnq] = useState<Enquiry[]>([])
@@ -60,6 +122,7 @@ export default function Admin() {
             ))}</tbody></table></div>
         )}
       </section>
+      <Cowriters songs={songs} reload={reload} />
       <section>
         <h2 style={{ marginBottom: 12 }}>Change password</h2>
         <form className="f" style={{ maxWidth: 380 }} onSubmit={changePw}>
