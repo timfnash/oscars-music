@@ -1,28 +1,31 @@
 /*
-  Brand, from the wedding photo: jacket blue is the main colour (buttons, links, headings and header text),
-  golden green (the sunlit lawn) for the header and footer, coral orange as the accent,
-  cream (the dress) and pale sunlit yellow (the flowers) for backgrounds and notice bars.
+  Brand, from the wedding photo: jacket blue is the main colour (headings, links, buttons),
+  peacock blue for the header and footer (lifted off the page with a soft shadow),
+  golden green (the sunlit lawn) as a small accent on the menu underline and calendar dates,
+  coral orange for hover and selected states, cream (the dress) for the page and pale sunlit yellow (the flowers) for notice bars.
   Black and white (bow tie, shirt, scores) are used for text and cards.
-  Light mode uses 10 colours; dark mode swaps in navy blues, light text and a darker golden green.
+  Light mode uses 10 colours; dark mode swaps in navy blues and light text.
   Type: Bricolage Grotesque Bold for headings and the logo, Source Sans 3 for body text, IBM Plex Mono for chords.
 */
 :root {
-  --bg: #F7F0DE;         /* cream */
+  --bg: #FBF8EF;         /* cream */
   --surface: #FFFFFF;    /* white */
-  --sunk: #E6DCC4;       /* sand */
+  --sunk: #DFEFEA;       /* pale peacock green: placeholders, hover */
   --ink: #1B1D1F;        /* soft black */
   --muted: #6B655A;      /* warm grey */
-  --line: #E6DCC4;       /* sand */
+  --line: #E7DFCB;       /* sand */
   --accent: #054872;     /* jacket blue: buttons, links */
   --accent-ink: #FFFFFF;
-  --accent-soft: #F1E39B;
+  --accent-soft: #DFEFEA;
   --head: #054872;       /* jacket blue: headings */
-  --warm: #E0662B;       /* coral orange: accents */
-  --sun: #F1E39B;        /* sunlit yellow: admin bar, preview bar, date blocks, highlights */
+  --warm: #E0662B;       /* coral orange: hover and selected */
+  --sun: #F1E39B;        /* sunlit yellow: admin bar, preview bar, highlights */
   --on-sun: #1B1D1F;
+  --lawn: #C2BC5E;       /* golden green: menu underline, calendar dates */
+  --lawn-ink: #054872;
   --danger: #C0291F;     /* brick red */
-  --bar: #C2BC5E;        /* golden green: header and footer */
-  --bar-ink: #054872;    /* jacket blue on the bars */
+  --bar: #05506F;        /* peacock blue: header and footer */
+  --bar-ink: #FBF8EF;
   --f-display: 'Bricolage Grotesque', 'Trebuchet MS', sans-serif;
   --f-body: 'Source Sans 3', 'Segoe UI', system-ui, sans-serif;
   --f-mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
@@ -41,8 +44,6 @@
     --accent-soft: #0E3E5F;
     --head: #F7F0DE;
     --danger: #FF9B8F;   /* soft salmon red */
-    --bar: #5B5A22;      /* dark golden green */
-    --bar-ink: #F7F0DE;
     color-scheme: dark;
   }
 }
@@ -63,27 +64,30 @@ h3 { font-size: 1rem; }
 .caps, .label { font-size: .75rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
 
 /* header */
-header.top { position: sticky; top: 0; z-index: 5; background: var(--bar); color: var(--bar-ink); padding-top: env(safe-area-inset-top, 0px); }
+header.top { position: sticky; top: 0; z-index: 5; background: var(--bar); color: var(--bar-ink); padding-top: env(safe-area-inset-top, 0px); box-shadow: 0 3px 12px rgba(4, 38, 56, .35); }
 .bar { display: flex; align-items: center; gap: 12px 20px; flex-wrap: wrap; padding-block: 12px; }
 .brand { font-family: var(--f-display); font-weight: 700; font-size: 1.2rem; letter-spacing: .04em; text-transform: uppercase; color: var(--bar-ink); text-decoration: none; display: flex; align-items: baseline; gap: 7px; }
 .brand em { font-style: normal; }
 nav.main { display: flex; gap: 2px; flex: 1; min-width: 0; flex-wrap: wrap; }
 nav.main a { padding: 6px 12px; color: var(--bar-ink); opacity: .85; font-weight: 600; text-decoration: none; text-transform: uppercase; letter-spacing: .14em; font-size: .78rem; font-weight: 500; border-bottom: 2px solid transparent; }
 nav.main a:hover { opacity: 1; }
-nav.main a.active { opacity: 1; border-color: var(--bar-ink); }
+nav.main a.active { opacity: 1; border-color: var(--lawn); border-bottom-width: 3px; }
 .adminbar { background: var(--sun); color: var(--on-sun); font-size: .85rem; }
 .adminbar .wrap { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; padding-block: 6px; }
 .adminbar button, .adminbar a { background: none; border: 0; color: inherit; text-decoration: underline; padding: 0; }
 .draftbar { background: var(--sun); color: var(--on-sun); font-size: .85rem; padding: 6px 0; }
 
 main { padding-block: 32px 72px; min-height: 60vh; }
-footer { background: var(--bar); color: var(--bar-ink); padding-block: 22px; font-size: .85rem; }
+footer { position: relative; background: var(--bar); color: var(--bar-ink); padding-block: 22px; font-size: .85rem; box-shadow: 0 -3px 12px rgba(4, 38, 56, .3); }
 footer a { color: var(--bar-ink); }
 footer .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 
 /* controls */
 .btn { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); padding: 8px 16px; border-radius: 4px; font-weight: 500; text-decoration: none; letter-spacing: .04em; }
 .btn:hover { border-color: var(--accent); }
+/* Header button: cream on the peacock bar, coral on hover */
+.top .btn.primary { background: var(--bar-ink); border-color: var(--bar-ink); color: var(--bar); }
+.top .btn.primary:hover { background: var(--warm); border-color: var(--warm); color: var(--on-sun); }
 .btn.primary:hover { background: var(--warm); border-color: var(--warm); color: var(--on-sun); }
 .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; text-transform: uppercase; letter-spacing: .12em; font-size: .82rem; }
 .btn.small { padding: 4px 11px; font-size: .88rem; }
@@ -111,7 +115,7 @@ mark { background: var(--sun); color: var(--on-sun); border-radius: 2px; }
 .az { position: sticky; top: 90px; display: flex; flex-direction: column; font-size: .68rem; font-weight: 600; text-align: center; color: var(--muted); }
 .az a { padding: 1px 0; text-decoration: none; color: inherit; }
 .az a.off { opacity: .3; pointer-events: none; }
-.letter { font-family: var(--f-display); font-weight: 700; font-size: 1.1rem; color: var(--accent); padding: 16px 0 4px; border-bottom: 2px solid var(--warm); scroll-margin-top: 100px; }
+.letter { font-family: var(--f-display); font-weight: 700; font-size: 1.1rem; color: var(--accent); padding: 16px 0 4px; border-bottom: 1px solid var(--line); scroll-margin-top: 100px; }
 .row { display: flex; gap: 14px; align-items: center; width: 100%; text-align: left; background: none; border: 0; border-bottom: 1px solid var(--line); padding: 10px 4px; text-decoration: none; color: inherit; }
 .row:hover { background: var(--sunk); }
 .row .cover { width: 52px; font-size: 1.1rem; }
@@ -184,9 +188,9 @@ form.f textarea { min-height: 110px; resize: vertical; }
 
 /* calendar */
 .event { display: flex; gap: 16px; align-items: flex-start; padding: 16px 0; border-bottom: 1px solid var(--line); }
-.event .date { width: 56px; flex: none; text-align: center; background: var(--accent-soft); border-radius: 6px; padding: 6px 0; display: flex; flex-direction: column; line-height: 1.1; }
-.event .date b { font-family: var(--f-display); font-weight: 700; font-size: 1.5rem; color: var(--accent); }
-.event .date span { font-size: .72rem; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; }
+.event .date { width: 56px; flex: none; text-align: center; background: var(--lawn); border-radius: 6px; padding: 6px 0; display: flex; flex-direction: column; line-height: 1.1; }
+.event .date b { font-family: var(--f-display); font-weight: 700; font-size: 1.5rem; color: var(--lawn-ink); }
+.event .date span { font-size: .72rem; color: var(--lawn-ink); text-transform: uppercase; letter-spacing: .1em; }
 .event .what { flex: 1; min-width: 0; }
 .evtop { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .event .by { color: var(--muted); }
