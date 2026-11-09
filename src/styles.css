@@ -9,10 +9,10 @@
 :root {
   --bg: #F7F0DE;         /* cream */
   --surface: #FFFFFF;    /* white */
-  --sunk: #E8DFC8;       /* sand */
+  --sunk: #E6DCC4;       /* sand */
   --ink: #1B1D1F;        /* soft black */
   --muted: #6B655A;      /* warm grey */
-  --line: #E3D9C0;       /* sand */
+  --line: #E6DCC4;       /* sand */
   --accent: #054872;     /* jacket blue: buttons, links */
   --accent-ink: #FFFFFF;
   --accent-soft: #F1E39B;
