@@ -1,8 +1,8 @@
 /*
   Brand, from the wedding photo: jacket blue is the main colour (headings, links, buttons),
   peacock blue for the header and footer (lifted off the page with a soft shadow),
-  golden green (the sunlit lawn) as a small accent on the menu underline and calendar dates,
-  coral orange for hover and selected states, cream (the dress) for the page and pale sunlit yellow (the flowers) for notice bars.
+  golden green (the sunlit lawn) for the menu underline, calendar dates, hover and selected tabs,
+  cream (the dress) for the page and pale sunlit yellow (the flowers) for notice bars.
   Black and white (bow tie, shirt, scores) are used for text and cards.
   Light mode uses 10 colours; dark mode swaps in navy blues and light text.
   Type: Bricolage Grotesque Bold for headings and the logo, Source Sans 3 for body text, IBM Plex Mono for chords.
@@ -18,7 +18,6 @@
   --accent-ink: #FFFFFF;
   --accent-soft: #E3F2F4;
   --head: #05506F;       /* peacock blue: headings, same as the bars */
-  --warm: #E0662B;       /* coral orange: hover and selected */
   --sun: #F1E39B;        /* sunlit yellow: admin bar, preview bar, highlights */
   --on-sun: #1B1D1F;
   --lawn: #C2BC5E;       /* golden green: menu underline, calendar dates */
@@ -85,7 +84,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wr
 /* controls */
 .btn { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); padding: 8px 16px; border-radius: 4px; font-weight: 500; text-decoration: none; letter-spacing: .04em; }
 .btn:hover { border-color: var(--accent); }
-/* Header button: cream on the peacock bar, coral on hover */
+/* Header button: cream on the peacock bar, golden green on hover */
 .top .btn.primary { background: var(--bar-ink); border-color: var(--bar-ink); color: var(--bar); }
 .top .btn.primary:hover { background: var(--lawn); border-color: var(--lawn); color: var(--lawn-ink); }
 .btn.primary:hover { background: var(--lawn); border-color: var(--lawn); color: var(--lawn-ink); }
